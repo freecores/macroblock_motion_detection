@@ -779,7 +779,7 @@ always @(posedge clk2 or negedge rst)
 			  minyt <= oldminy + 1;
 			end
  		500:  lowflag <=0;
-		508:  dout <= {10'b0,minx,10'b0,miny};
+		507:  dout <= {10'b0,minx,10'b0,miny};
 		510:  begin minxt <= 16; minyt <= 16; lowsum[1] <= 0; lowflag <=1; end	
 		// Upper Left Corner of Center Block
 	     511:  lowflag <= 0;    

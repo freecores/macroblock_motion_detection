@@ -112,7 +112,7 @@ parameter frame_height = 80;  //196;	   // currently must be multiple of 16 480
 // Outputs
     wire [7:0] dout1;
     wire douten;
-
+    wire [31:0] HP_dout;
 
 // Bidirs
 
@@ -124,48 +124,6 @@ wire [16:0] address_1;
 wire [31:0] data_1;
 wire cs_1,we_1,oe_1;
 
-// Motion Detect wires
-    wire MD_ena;
-    wire MD_rst;
-    wire [31:0] MD_din1, MD_din2;
-    wire [3:0] MD_state;
-    wire [8:0] MD_count;
-
-
-// Outputs
-    wire [31:0] MD_dout;
-
-// Instantiate the UUT
-    FrametoMacroBlock #(frame_width, frame_height)
-    FrametoMacroBlock1 (
-        .clk(clk), 
-        .ena(ena), 
-        .rst(rst), 
-        .dstrb(dstrb), 
-        .dclr(dclr), 
-        .din1(din1), 
-        .dout1(dout1), 
-        .douten(douten),
-	   .MD_ena(MD_ena), 
-        .MD_rst(MD_rst), 
-        .MD_din1(MD_din1),
-        .MD_din2(MD_din2),	    
-        .MD_dout(MD_dout), 
-        .MD_state(MD_state),
-	   .MD_count(MD_count),
-
-	   .address_0(address_0), 
-        .data_0(data_0), 
-        .cs_0(cs_0), 
-        .we_0(we_0), 
-        .oe_0(oe_0), 
-        .address_1(address_1), 
-        .data_1(data_1), 
-        .cs_1(cs_1), 
-        .we_1(we_1), 
-        .oe_1(oe_1)
-
-        );
 
   // Instantiate the ram	 (Outside of FPGA, but all pins will connect to FPGA)
     ram_dp_sr_sw ram (
@@ -182,17 +140,30 @@ wire cs_1,we_1,oe_1;
         .oe_1(oe_1)
         );
 
-  // Instantiate Motion Detection Module
-
-      MotionDetection MD (
+// Instantiate the UUT
+    motion_detection_top #(frame_width, frame_height)
+    motion_detection_top (
         .clk(clk), 
-        .ena(MD_ena), 
-        .rst(MD_rst), 
-        .din1(MD_din1),
-	   .din2(MD_din2), 
-        .dout(MD_dout), 
-        .state(MD_state),
-	   .count(MD_count)
+        .ena(ena), 
+        .rst(rst), 
+        .dstrb(dstrb), 
+        .dclr(dclr), 
+        .din1(din1), 
+        .dout1(dout1), 
+        .douten(douten),
+
+	   .address_0(address_0), 
+        .data_0(data_0), 
+        .cs_0(cs_0), 
+        .we_0(we_0), 
+        .oe_0(oe_0), 
+        .address_1(address_1), 
+        .data_1(data_1), 
+        .cs_1(cs_1), 
+        .we_1(we_1), 
+        .oe_1(oe_1),
+	   .HP_dout(HP_dout)
+
         );
 
 // Registers for file input
@@ -208,7 +179,7 @@ wire cs_1,we_1,oe_1;
   reg [8*7:1] name;
   reg [8*7:1] nameu;
   reg [8*7:1] namev;
-  reg [8*72:1] dir;
+  reg [8*17:1] dir;
   reg [8*79:1] full;
 
 // Initialize Inputs
@@ -227,11 +198,11 @@ initial begin
   ena <= 1;
   // Read Frames from YUV files 
   begin : file_block
-    dir = "C:\\Documents and Settings\\user\\Desktop\\MPEG\\mpeg2v12\\src\\mpeg2dec\\Test2\\";
+    dir = ".\\SampleFrames\\";  //17
     name = "Vac10.Y";
     nameu = "Vac10.U";
     namev = "Vac10.V";
-    while (name[23:17] < 53)
+    while (name[23:17] < 50)	  //   50 = hex 32 -- process two frames
       begin
   	   $display("name[3]",name[24:17]);
 	   full = {dir,name};
