@@ -208,7 +208,7 @@ wire cs_1,we_1,oe_1;
   reg [8*7:1] name;
   reg [8*7:1] nameu;
   reg [8*7:1] namev;
-  reg [8*72:1] dir;
+  reg [8*17:1] dir;
   reg [8*79:1] full;
 
 // Initialize Inputs
@@ -227,7 +227,7 @@ initial begin
   ena <= 1;
   // Read Frames from YUV files 
   begin : file_block
-    dir = "C:\\Documents and Settings\\user\\Desktop\\MPEG\\mpeg2v12\\src\\mpeg2dec\\Test2\\";
+    dir = ".\\SampleFrames\\";  //17
     name = "Vac10.Y";
     nameu = "Vac10.U";
     namev = "Vac10.V";
