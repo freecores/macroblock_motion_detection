@@ -468,8 +468,8 @@ always @(posedge clk2 or negedge rst)
 	 end
   end
 
-// control for Motion Detection Enable and rst
-always @(posedge clk2 or negedge rst)
+// control for Motion Detection Enable and rst   
+always @(negedge clk2 or negedge rst)	 // changed to negedge to align clk2s
   begin
     if (~rst)
       begin
